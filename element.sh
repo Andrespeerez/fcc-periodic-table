@@ -23,4 +23,7 @@ else if [[ -z $SYMBOL ]]
 else if [[ -z $NAME ]]
   ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE name='$1'")
   SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE name='$1'")
+else
+  # case input $1 is not found
+  echo "I could not find that element in the database."
 fi
