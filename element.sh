@@ -1,9 +1,9 @@
 #!/bin/bash
 # Script that prints on screen information about a chemical element
 PSQL="psql --username=freecodecamp --dbname=periodic_table --no-align --tuples-only -c"
-
+ONE=$1
 # case empty argument
-if [[ -z $1 ]]
+if [[ -z $ONE ]]
 then
   echo "Please provide an element as an argument."
 fi
@@ -17,10 +17,12 @@ if [[ -z $ATOMIC_NUMBER ]]
 then
   SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE atomic_number=$1")
   NAME=$($PSQL "SELECT name FROM elements WHERE atomic_number=$1")
-else if [[ -z $SYMBOL ]]
+elif [[ -z $SYMBOL ]]
+  then
   ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1'")
   NAME=$($PSQL "SELECT name FROM elements WHERE symbol='$1'")  
-else if [[ -z $NAME ]]
+elif [[ -z $NAME ]]
+  then
   ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE name='$1'")
   SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE name='$1'")
 else
