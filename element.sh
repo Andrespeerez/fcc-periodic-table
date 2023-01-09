@@ -6,6 +6,7 @@ if [[ -z $1 ]]
 then
   echo "Please provide an element as an argument."
   exit 0
+# check atomic_number
 elif [[ $1 =~ ^[0-9]*$ ]]
 then
   GET_ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE atomic_number=$1")
@@ -20,6 +21,7 @@ then
   GET_TYPE=$($PSQL "SELECT type FROM properties INNER JOIN types ON types.type_id = properties.type_id WHERE atomic_number=$1")
   GET_MP=$($PSQL "SELECT melting_point_celsius FROM properties WHERE atomic_number=$1")
   GET_BP=$($PSQL "SELECT boiling_point_celsius FROM properties WHERE atomic_number=$1")
+# check symbol
 elif [[ $1 =~ ^[A-Z]$ || $1 =~ ^[A-Z][a-z]$ ]]
 then
   GET_ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1'")
@@ -30,10 +32,11 @@ then
   fi
   GET_SYMBOL=$($PSQL "SELECT symbol FROM elements WHERE symbol='$1'")
   GET_NAME=$($PSQL "SELECT name FROM elements WHERE symbol='$1'")
-  GET_ATOMIC_MASS=$($PSQL "SELECT atomic_mass FROM properties WHERE symbol='$1'")
-  GET_TYPE=$($PSQL "SELECT type FROM properties INNER JOIN types ON types.type_id = properties.type_id WHERE symbol='$1'")
-  GET_MP=$($PSQL "SELECT melting_point_celsius FROM properties WHERE symbol='$1'")
-  GET_BP=$($PSQL "SELECT boiling_point_celsius FROM properties WHERE symbol='$1'")
+  GET_ATOMIC_MASS=$($PSQL "SELECT atomic_mass FROM properties INNER JOIN elements ON properties.atomic_number = elements.atomic_number WHERE symbol='$1'")
+  GET_TYPE=$($PSQL "SELECT type FROM properties INNER JOIN types ON types.type_id = properties.type_id INNER JOIN elements ON properties.atomic_number = elements.atomic_number WHERE symbol='$1'")
+  GET_MP=$($PSQL "SELECT melting_point_celsius FROM properties INNER JOIN elements ON properties.atomic_number = elements.atomic_number WHERE symbol='$1'")
+  GET_BP=$($PSQL "SELECT boiling_point_celsius FROM properties INNER JOIN elements ON properties.atomic_number = elements.atomic_number WHERE symbol='$1'")
+# check name
 else
   GET_ATOMIC_NUMBER=$($PSQL "SELECT atomic_number FROM elements WHERE name='$1'")
   if [[ -z $GET_ATOMIC_NUMBER ]]
